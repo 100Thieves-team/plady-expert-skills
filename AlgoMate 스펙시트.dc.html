@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/pretendard/1.3.9/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap">
+<style>
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:#eef1ee}
+  doc-page:not(:defined){visibility:hidden}
+  .sd{font-family:'Pretendard Variable',Pretendard,-apple-system,BlinkMacSystemFont,'Apple SD Gothic Neo',sans-serif;color:#16241d;font-size:13px;line-height:1.6}
+  .sd h1,.sd h2,.sd h3,.sd h4{font-family:inherit}
+  .mono{font-family:'JetBrains Mono',monospace}
+</style>
+</helmet>
+<x-import component-from-global-scope="doc-page" from="./doc-page.js" size="a4" margin="0.7in" hint-size="100%,100%">
+<div class="sd">
+
+  <div slot="header" style="display:flex;align-items:center;justify-content:space-between;padding:0 0 7px;border-bottom:1px solid #e2e8e4;font-size:10px;color:#8a968f">
+    <span style="display:flex;align-items:center;gap:6px"><span style="width:13px;height:13px;border-radius:4px;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:8px">A</span><b style="color:#16241d;font-weight:700">AlgoMate</b> 기능 명세서</span>
+    <span>PoC Spec Sheet · v1.0</span>
+  </div>
+  <div slot="footer" style="display:flex;align-items:center;justify-content:space-between;padding:7px 0 0;border-top:1px solid #e2e8e4;font-size:9.5px;color:#aab4ad">
+    <span>내부 데모용 · 백엔드 없는 클릭형 프로토타입</span>
+    <span>2026 하반기 코테 스터디</span>
+  </div>
+
+  <!-- TITLE BLOCK -->
+  <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:6px">
+    <div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+        <span style="width:34px;height:34px;border-radius:10px;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-weight:800;font-size:17px">A</span>
+        <span style="font-size:26px;font-weight:800;letter-spacing:-.02em">AlgoMate 기능 명세서</span>
+      </div>
+      <div style="font-size:13.5px;color:#5b6b62;line-height:1.55;max-width:560px">백준 그룹 · GitHub PR · 문제집 · 카톡 독촉으로 흩어진 코딩테스트 스터디 운영을 한곳에서 하는 플랫폼. 본 문서는 실제 개발 착수 전, 도메인과 핵심 경험을 검증하기 위해 만든 <b>클릭형 PoC의 구현 명세</b>다.</div>
+    </div>
+  </div>
+
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 22px">
+    <span style="font-size:11px;font-weight:700;color:#15803d;background:#dcfce7;border:1px solid #bbf7d0;border-radius:999px;padding:4px 11px">PoC / 내부 데모</span>
+    <span style="font-size:11px;font-weight:700;color:#4b5750;background:#eef2ee;border:1px solid #e2e8e4;border-radius:999px;padding:4px 11px">백엔드 없음 · 더미 데이터</span>
+    <span style="font-size:11px;font-weight:700;color:#4b5750;background:#eef2ee;border:1px solid #e2e8e4;border-radius:999px;padding:4px 11px">4영역 · 9 핵심 인터랙션</span>
+    <span style="font-size:11px;font-weight:700;color:#4b5750;background:#eef2ee;border:1px solid #e2e8e4;border-radius:999px;padding:4px 11px">작성일 2026-07-04</span>
+  </div>
+
+  <!-- 0. 개요 -->
+  <sc-for list="{{ sections }}" as="sec" hint-placeholder-count="8">
+    <div style="break-inside:avoid;margin-bottom:9px;margin-top:6px;display:flex;align-items:center;gap:9px;border-bottom:2px solid #16a34a;padding-bottom:6px">
+      <span style="width:22px;height:22px;border-radius:6px;background:#16241d;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:800;flex-shrink:0">{{ sec.no }}</span>
+      <span style="font-size:16.5px;font-weight:800;letter-spacing:-.01em">{{ sec.title }}</span>
+      <span style="font-size:11px;color:#9bb0a3;margin-left:auto">{{ sec.tag }}</span>
+    </div>
+    <div style="margin-bottom:22px" dangerouslySetInnerHTML="{{ sec.bodyHtml }}"></div>
+  </sc-for>
+
+</div>
+</x-import>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+class Component extends DCLogic {
+
+  // ---- shared style tokens (inline HTML strings) ----
+  S = {
+    wrap:'display:flex;flex-direction:column;gap:12px',
+    lead:'font-size:12.5px;color:#5b6b62;line-height:1.6;margin:0 0 4px',
+    // table
+    table:'width:100%;border-collapse:collapse;font-size:11.5px;break-inside:avoid',
+    th:'text-align:left;padding:7px 10px;background:#f2f6f3;border:1px solid #e2e8e4;font-weight:700;color:#3f4d47;font-size:10.5px;letter-spacing:.01em',
+    td:'padding:7px 10px;border:1px solid #e9efeb;color:#2f3d37;vertical-align:top',
+    tdMono:'padding:7px 10px;border:1px solid #e9efeb;color:#16241d;font-family:\'JetBrains Mono\',monospace;font-weight:600;white-space:nowrap',
+    card:'border:1px solid #e2e8e4;border-radius:11px;padding:13px 15px;background:#fbfdfb;break-inside:avoid',
+  };
+
+  chip(text,bg,fg,bd){ return `<span style="display:inline-flex;align-items:center;gap:4px;font-size:10.5px;font-weight:700;color:${fg};background:${bg};border:1px solid ${bd};border-radius:6px;padding:2px 7px;white-space:nowrap">${text}</span>`; }
+  ac(){ return this.chip('맞음','#dcfce7','#15803d','#bbf7d0'); }
+  wa(){ return this.chip('틀림','#fee2e2','#dc2626','#fecaca'); }
+  none(){ return this.chip('안 풂','#f1f5f4','#8a968f','#e2e8e4'); }
+  tier(t){
+    if(t.indexOf('Gold')===0) return this.chip(t,'#fef8e0','#b0810f','#f6e6a8');
+    if(t.indexOf('Silver')===0) return this.chip(t,'#eef1f5','#6b7787','#dbe1e8');
+    return this.chip(t,'#eef1f5','#6b7787','#dbe1e8');
+  }
+
+  ul(items){
+    return `<ul style="margin:0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:7px">`+
+      items.map(t=>`<li style="display:flex;gap:9px;align-items:flex-start;font-size:12.5px;color:#2f3d37;line-height:1.55"><span style="color:#16a34a;flex-shrink:0;margin-top:5px;width:5px;height:5px;border-radius:999px;background:#16a34a;display:inline-block"></span><span>${t}</span></li>`).join('')+
+    `</ul>`;
+  }
+  // labelled feature row: name + desc + state note
+  featRows(rows){
+    return `<table style="${this.S.table}"><thead><tr>`+
+      `<th style="${this.S.th};width:26%">기능</th><th style="${this.S.th};width:44%">동작 / 표시 정보</th><th style="${this.S.th};width:30%">상태 변화 · 규칙</th>`+
+      `</tr></thead><tbody>`+
+      rows.map(r=>`<tr><td style="${this.S.td};font-weight:700;color:#16241d">${r[0]}</td><td style="${this.S.td}">${r[1]}</td><td style="${this.S.td};color:#4b5750">${r[2]}</td></tr>`).join('')+
+      `</tbody></table>`;
+  }
+
+  renderVals(){
+    const S=this.S;
+    const box=(inner,mt)=>`<div style="${S.wrap}${mt?';margin-top:'+mt:''}">${inner}</div>`;
+    const note=t=>`<p style="${S.lead}">${t}</p>`;
+
+    // ---------- 1. 개요 & 컨텍스트 ----------
+    const overview = box(
+      note('실제 서비스 개발 전, 팀원들이 클릭해보며 “알고리즘 스터디는 문제 풀이가 아니라 <b>문제 선정·마감·제출·독촉·풀이 공개·코드 비교·진행률 관리가 계속 발생하는 운영 문제</b>”임을 체감하게 하는 것이 목표.') +
+      `<table style="${S.table}"><tbody>`+
+        `<tr><td style="${S.th};width:26%">서비스명</td><td style="${S.td}"><b>AlgoMate</b> — 흩어진 코테 스터디 운영을 한곳에서</td></tr>`+
+        `<tr><td style="${S.th}">타겟 사용자</td><td style="${S.td}">코딩테스트를 준비하는 대학생·취준생 스터디 그룹 (SW 마에스트로 연수생, 대학 알고리즘 동아리, 취업 준비 코테 스터디, 백엔드 취준 스터디 등)</td></tr>`+
+        `<tr><td style="${S.th}">스터디 컨텍스트</td><td style="${S.td}">2026 하반기 코테 스터디 · <b>3주차 · DP 집중 주간</b> · 마감 D-2</td></tr>`+
+        `<tr><td style="${S.th}">현재 사용자</td><td style="${S.td}">김준서 — 역할 <b>스터디장</b></td></tr>`+
+        `<tr><td style="${S.th}">해결하는 분산</td><td style="${S.td}">백준 그룹(진도) + GitHub PR(코드) + 문제집(문제 선정) + 카톡(독촉) → 한 화면으로 통합</td></tr>`+
+      `</tbody></table>`
+    );
+
+    // ---------- 2. 데이터 모델 ----------
+    const members = box(
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin-bottom:2px">멤버 (4명)</div>`+
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">이름</th><th style="${S.th}">백준 티어</th><th style="${S.th}">비고</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">김준서</td><td style="${S.td}">${this.tier('Gold III')}</td><td style="${S.td}">현재 사용자 · 스터디장</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">이유제</td><td style="${S.td}">${this.tier('Silver I')}</td><td style="${S.td}">—</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">이중곤</td><td style="${S.td}">${this.tier('Gold V')}</td><td style="${S.td}">—</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">박민서</td><td style="${S.td}">${this.tier('Silver II')}</td><td style="${S.td}">—</td></tr>`+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:14px 0 2px">문제 (8개 · 실제 백준 번호/제목)</div>`+
+      note('AlgoMate가 관리하는 범위는 <b>번호·제목·난이도·태그·원문 링크·제출 기록(메타 + 사용자 코드)</b>뿐. 문제 지문·입력·출력·예제는 절대 표시하지 않는다. 백준 문제의 원문 링크는 저작권 회피를 위해 <b>구글 검색으로 리다이렉트</b>한다.') +
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">번호</th><th style="${S.th}">제목</th><th style="${S.th}">난이도</th><th style="${S.th}">태그</th></tr></thead><tbody>`+
+        [['1926','그림','Silver I','BFS · DFS · 그래프 탐색'],
+         ['2178','미로 탐색','Silver I','BFS · 최단거리'],
+         ['7576','토마토','Gold V','BFS · 그래프 탐색'],
+         ['1753','최단경로','Gold IV','다익스트라 · 우선순위 큐 · 그래프'],
+         ['12865','평범한 배낭','Gold V','DP · 배낭 문제'],
+         ['9251','LCS','Gold V','DP · 문자열'],
+         ['11053','가장 긴 증가하는 부분 수열','Silver II','DP · LIS'],
+         ['1916','최소비용 구하기','Gold V','다익스트라 · 그래프']]
+        .map(r=>`<tr><td style="${S.tdMono}">${r[0]}</td><td style="${S.td};font-weight:600">${r[1]}</td><td style="${S.td}">${this.tier(r[2])}</td><td style="${S.td};color:#5b6b62">${r[3]}</td></tr>`).join('')+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:14px 0 4px">커리큘럼에 섞인 프로그래머스 · LeetCode 예시</div>`+
+      note('커리큘럼은 백준 외에 프로그래머스·LeetCode 문제도 함께 묶는다. 난이도는 플랫폼 체계(프로그래머스 Lv. / LeetCode Easy·Medium·Hard)로, 원문은 <b>실제 문제 URL로 링크</b>한다.') +
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">플랫폼</th><th style="${S.th}">제목</th><th style="${S.th}">난이도</th><th style="${S.th}">태그</th></tr></thead><tbody>`+
+        [['프로그래머스','타겟 넘버','Lv.2','DFS · 완전탐색'],
+         ['프로그래머스','가장 먼 노드','Lv.3','BFS · 그래프'],
+         ['프로그래머스','등굣길','Lv.3','DP'],
+         ['LeetCode 200','Number of Islands','Medium','DFS · BFS'],
+         ['LeetCode 322','Coin Change','Medium','DP']]
+        .map(r=>`<tr><td style="${S.td};font-weight:700;white-space:nowrap">${r[0]}</td><td style="${S.td};font-weight:600">${r[1]}</td><td style="${S.td}">${r[2].indexOf('Lv')===0?this.chip(r[2],'#e3f6ec','#1f7a4d','#c7ecd6'):this.chip(r[2],'#fff2df','#b45309','#fde3c0')}</td><td style="${S.td};color:#5b6b62">${r[3]}</td></tr>`).join('')+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:14px 0 4px">제출 상태 (3종)</div>`+
+      `<div style="display:flex;gap:10px;flex-wrap:wrap">${this.ac()} ${this.wa()} ${this.none()}</div>`
+    );
+
+    // ---------- 3. 스터디 현황 ----------
+    const dashboard = box(
+      note('“스터디가 지금 진행 중이고, 스터디장이 수동 취합 없이 현황을 본다”를 보여주는 영역.') +
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin-bottom:4px">3.1 요약 지표 (카드 3개)</div>`+
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">지표</th><th style="${S.th}">값</th><th style="${S.th}">설명</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">이번 주 문제 수</td><td style="${S.tdMono}">6문제</td><td style="${S.td}">DP 3문제 · 그래프 3문제</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">이번 주 제출률</td><td style="${S.tdMono}">71%</td><td style="${S.td}">24개 제출 중 17개 완료 <span style="color:#15803d">· 채점 반영 시 실시간 재계산</span></td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">누적 해결 수</td><td style="${S.tdMono}">138개</td><td style="${S.td}">스터디 전체 누적 <span style="color:#15803d">· 정답 반영 시 +1</span></td></tr>`+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">3.2 이번 주 진도 (히트맵: 멤버 4 × 문제 6)</div>`+
+      note('대상 문제: 1926 · 2178 · 7576 · 1753 · 12865 · 9251. 각 셀은 맞음/틀림/안 풂 3색, 행 끝에 멤버별 완료율 진행바.') +
+      `<table style="${S.table};font-size:10.5px"><thead><tr>`+
+        `<th style="${S.th}">멤버</th>`+
+        ['1926','2178','7576','1753','12865','9251'].map(n=>`<th style="${S.th};text-align:center" class="mono">${n}</th>`).join('')+
+        `<th style="${S.th};text-align:center">완료율</th></tr></thead><tbody>`+
+        [['김준서',['ac','ac','ac','ac','wa','none'],'67%'],
+         ['이유제',['ac','ac','wa','none','none','none'],'33%'],
+         ['이중곤',['ac','ac','ac','wa','ac','none'],'67%'],
+         ['박민서',['ac','wa','none','none','none','none'],'17%']]
+        .map(r=>`<tr><td style="${S.td};font-weight:700">${r[0]}</td>`+
+          r[1].map(st=>`<td style="${S.td};text-align:center">${st==='ac'?'●':st==='wa'?'✕':'–'}</td>`.replace('●','<span style="color:#16a34a;font-size:13px">●</span>').replace('✕','<span style="color:#dc2626;font-weight:800">✕</span>').replace('>–<','style="color:#c8d4cc">–<')).join('')+
+          `<td style="${S.td};text-align:center;font-weight:800;color:#16241d" class="mono">${r[2]}</td></tr>`).join('')+
+      `</tbody></table>`+
+      `<div style="font-size:10px;color:#9bb0a3;margin-top:3px"><span style="color:#16a34a">●</span> 맞음 &nbsp; <span style="color:#dc2626">✕</span> 틀림 &nbsp; <span style="color:#c8d4cc">–</span> 안 풂</div>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">3.3 활동 피드 & 자동 독촉</div>`+
+      this.featRows([
+        ['활동 피드','제출·정답·오답·독촉 유형별 아이콘/색으로 최근 활동을 최신순 표시. 초기 5건 시드(김준서 12865 3번째 틀림 2분 전 등)','새 활동은 상단에 삽입 + 하이라이트 애니메이션'],
+        ['미제출자 자동 독촉','미제출자를 자동 식별해 일괄 독촉. 실행 시 “이유제, 박민서에게 이번 주 미제출 문제 독촉 알림을 보냈습니다 · 방금 전” 추가','피드 상단 로그 + 토스트. 스터디장이 매주 카톡으로 직접 독촉할 필요 없음을 시연'],
+      ])
+    );
+
+    // ---------- 4. 커리큘럼 ----------
+    const curriculum = box(
+      note('주차별로 문제를 묶어 관리함을 보여주는 영역. 현재 주차는 3주차.') +
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">주차</th><th style="${S.th}">주제</th><th style="${S.th}">문제</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">1주차</td><td style="${S.td}">그래프 탐색</td><td style="${S.td}" class="mono">1926 그림 · 2178 미로 탐색 · 7576 토마토</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">2주차</td><td style="${S.td}">최단경로</td><td style="${S.td}" class="mono">1753 최단경로 · 1916 최소비용 구하기</td></tr>`+
+        `<tr style="background:#f0fbf4"><td style="${S.td};font-weight:800;color:#15803d">3주차 ★</td><td style="${S.td};font-weight:700">DP <span style="font-weight:400;color:#15803d">(현재)</span></td><td style="${S.td}" class="mono">12865 평범한 배낭 · 9251 LCS · 11053 LIS</td></tr>`+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">4.1 문제 카드 표시 정보</div>`+
+      `<div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:2px">`+
+        ['문제 번호','제목','난이도','알고리즘 태그','멤버별 제출 상태(아바타)','해결 인원수','원문 보기(백준 링크)','제출하기']
+        .map(t=>`<span style="font-size:10.5px;font-weight:600;color:#3f4d47;background:#eef6f0;border:1px solid #d7ecdd;border-radius:6px;padding:3px 9px">${t}</span>`).join('')+
+      `</div>`+
+      note('컨셉 배너 상시 노출: “저작권 보호를 위해 문제 지문은 담지 않습니다. AlgoMate는 번호·제목·난이도·태그와 제출 기록(메타 + 사용자 코드)만 관리하며, <b>백준 문제는 구글 검색으로 연결</b>합니다.” · 문제 카드의 “원문 보기”는 <b>구글에서 찾기</b>로 표기된다.') +
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">4.2 제출 흐름 (모달) — 예시 대상 12865 평범한 배낭</div>`+
+      `<table style="${S.table}"><thead><tr><th style="${S.th};width:16%">단계</th><th style="${S.th}">화면 / 동작</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">① 편집</td><td style="${S.td}">헤더에 BOJ 12865 · 평범한 배낭 · Gold V · 태그(DP·배낭 문제). 언어 선택 <b>Kotlin / Java / Python</b>(언어별 기본 코드 자동 삽입) + 코드 편집 영역</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">② 채점</td><td style="${S.td}">“제출하고 채점받기” → 스피너/진행바로 <b>테스트케이스 채점 중… 4/10 → 8/10</b> 순차 진행</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">③ 통과</td><td style="${S.td}"><b>맞았습니다! 10/10 통과, 132ms</b> · 메모리 64MB 결과 카드</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">④ 반영</td><td style="${S.td}">“결과 반영하기” → 모달 종료 + 아래 상태 변화 발생</td></tr>`+
+      `</tbody></table>`+
+      `<div style="${S.card};margin-top:10px;background:#f0fbf4;border-color:#cdeed9">`+
+        `<div style="font-size:11.5px;font-weight:800;color:#15603a;margin-bottom:7px">④ 결과 반영 시 연쇄 효과</div>`+
+        this.ul([
+          '해당 문제의 <b>김준서 상태 → 맞음</b>으로 변경 (현황 히트맵 셀 초록 + 팝 애니메이션)',
+          '활동 피드 상단에 “김준서가 12865 평범한 배낭을 맞았습니다 · 방금 전” 추가',
+          '이번 주 제출률 · 누적 해결 수 지표 즉시 갱신',
+        ])+
+      `</div>`+
+      `<div style="font-size:11px;color:#9bb0a3;margin-top:6px">→ 채점 결과가 스터디 현황에 <b>바로 반영</b>된다는 것을 보여주는 것이 이 흐름의 목적.</div>`
+    );
+
+    // ---------- 5. 코드 비교 ----------
+    const compare = box(
+      note('GitHub PR을 하나씩 열지 않아도 같은 문제를 푼 멤버 풀이를 나란히 비교. 기준 문제 <b>BOJ 1753 최단경로 (Gold IV · 다익스트라·우선순위 큐·그래프)</b>, 3인 풀이.') +
+      `<table style="${S.table}"><thead><tr><th style="${S.th}">멤버</th><th style="${S.th}">언어</th><th style="${S.th}">실행시간</th><th style="${S.th}">메모리</th><th style="${S.th}">상태</th><th style="${S.th}">특징</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">김준서</td><td style="${S.td}">Python</td><td style="${S.tdMono};color:#15803d">132ms</td><td style="${S.tdMono}">64MB</td><td style="${S.td}">${this.ac()}</td><td style="${S.td};color:#5b6b62">heapq 기반 · 간선 많아도 안정적</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">이유제</td><td style="${S.td}">Java</td><td style="${S.tdMono};color:#2563eb">312ms</td><td style="${S.tdMono}">96MB</td><td style="${S.td}">${this.ac()}</td><td style="${S.td};color:#5b6b62">PriorityQueue 정석 다익스트라</td></tr>`+
+        `<tr style="background:#fff8f2"><td style="${S.td};font-weight:700">이중곤</td><td style="${S.td}">Java</td><td style="${S.tdMono};color:#c2410c">1204ms</td><td style="${S.tdMono}">88MB</td><td style="${S.td}">${this.ac()} ${this.chip('느린 풀이','#ffedd5','#c2410c','#fed7aa')}</td><td style="${S.td};color:#5b6b62">우선순위큐 없이 선형 탐색 O(V²)</td></tr>`+
+      `</tbody></table>`+
+      `<div style="font-size:11.5px;color:#4b5750;margin-top:8px">각 풀이마다 실행시간 막대 비교 · 문법 하이라이트 코드 · 작성자 코멘트를 함께 표시.</div>`+
+
+      `<div style="${S.card};margin-top:12px;background:#f0fbf4;border-color:#cdeed9">`+
+        `<div style="font-size:11.5px;font-weight:800;color:#15603a;margin-bottom:8px">“이 문제에서 배울 점” 요약</div>`+
+        this.ul([
+          '같은 다익스트라여도 우선순위큐 사용 여부에 따라 실행 시간이 크게 달라진다.',
+          '김준서·이유제 풀이는 우선순위큐 기반이라 큰 그래프에 유리하다.',
+          '이중곤 풀이는 정답은 맞았지만 정점 수가 커질수록 병목이 생길 수 있다.',
+          'GitHub PR을 하나씩 열어보지 않아도 이런 차이를 바로 비교할 수 있다.',
+        ])+
+      `</div>`
+    );
+
+    // ---------- 6. 익스텐션 ----------
+    const extension = box(
+      note('“문제집 → 플랫폼에서 풀기 → 제출 저장 → 데이터로 기능 제공”을 잇는 익스텐션 흐름. 저작권 때문에 <b>메타 정보 + 사용자 코드만</b> 저장하고, 문제 지문은 담지 않는다.') +
+
+      `<div style="${S.card};margin-bottom:14px">`+
+        `<div style="font-size:11.5px;font-weight:800;color:#16241d;margin-bottom:10px">6.0 이상적인 흐름 (3단계)</div>`+
+        `<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px">`+
+          [['1','문제집 만들기','서비스 내부의 유명 백준 문제 모음, 또는 프로그래머스·LeetCode를 둘러보며 익스텐션으로 담기'],
+           ['2','플랫폼에서 풀기','문제집이 각 플랫폼 링크 제공 · 백준 문제는 저작권 때문에 구글 검색으로 리다이렉트'],
+           ['3','제출 저장','프로그래머스·LeetCode는 익스텐션이 자동 감지, 백준은 코드 붙여넣기 · 메타 + 사용자 코드만 저장']]
+          .map(s=>`<div style="background:#fff;border:1px solid #e9efeb;border-radius:9px;padding:11px 12px"><div style="display:flex;align-items:center;gap:6px;margin-bottom:5px"><span style="width:18px;height:18px;border-radius:5px;background:#16a34a;color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10px;font-weight:800">${s[0]}</span><span style="font-size:12px;font-weight:800;color:#16241d">${s[1]}</span></div><div style="font-size:10.5px;color:#5b6b62;line-height:1.5">${s[2]}</div></div>`).join('')+
+        `</div>`+
+        `<div style="font-size:10.5px;color:#2f5a41;background:#f0fbf4;border:1px solid #cdeed9;border-radius:8px;padding:8px 11px;margin-top:10px">→ 이렇게 모인 제출 데이터로 스터디 현황 · 미제출 독촉 · 코드 비교 기능을 제공. (알고리즘 시각화 · AI 리뷰는 이후 확장)</div>`+
+      `</div>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin-bottom:4px">6.1 플랫폼 연동 정책</div>`+
+      `<table style="${S.table}"><thead><tr><th style="${S.th};width:26%">플랫폼</th><th style="${S.th};width:22%">상태</th><th style="${S.th}">방식</th></tr></thead><tbody>`+
+        `<tr><td style="${S.td};font-weight:700">프로그래머스</td><td style="${S.td}">${this.chip('연동됨','#dcfce7','#15803d','#bbf7d0')}</td><td style="${S.td}">익스텐션이 채점 통과를 자동 감지 → 코드·메타 저장</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">LeetCode</td><td style="${S.td}">${this.chip('연동됨','#dcfce7','#15803d','#bbf7d0')}</td><td style="${S.td}">익스텐션이 채점 통과를 자동 감지 → 코드·메타 저장</td></tr>`+
+        `<tr><td style="${S.td};font-weight:700">백준 (BOJ)</td><td style="${S.td}">${this.chip('서비스 종료','#fff2df','#b45309','#fde3c0')}</td><td style="${S.td}">자동 연동 중단 · 문제는 구글 검색 링크로 제공, 코드 붙여넣기로 저장 · 오픈소스 채점(testcase-ac) 활용해 재개 시 지원 검토</td></tr>`+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">6.2 자동 반영 (라이브 데모)</div>`+
+      `<table style="${S.table}"><tbody>`+
+        `<tr><td style="${S.th};width:26%">익스텐션 팝업</td><td style="${S.td}">연결 상태 · 자동 동기화 토글(ON) · 연동된 저지 목록 · 최근 자동 반영 내역</td></tr>`+
+        `<tr><td style="${S.th}">데모</td><td style="${S.td}">플랫폼 탭 전환(프로그래머스 / LeetCode) → “채점하기” → <b>채점 중 → 정답 → AlgoMate 감지 → 코드·메타 저장</b> 4단계 애니메이션(모의 브라우저)</td></tr>`+
+        `<tr><td style="${S.th}">저장 결과</td><td style="${S.td}">프로그래머스 ‘네트워크(Lv.3)’ / LeetCode ‘Number of Islands(Medium)’ 통과 시 → 활동 피드·최근 반영 내역에 <b>메타 + 코드</b> 저장 (지문 미저장)</td></tr>`+
+      `</tbody></table>`+
+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:15px 0 4px">6.3 문제집 만들기</div>`+
+      `<table style="${S.table}"><tbody>`+
+        `<tr><td style="${S.th};width:26%">유명 백준 모음</td><td style="${S.td}" class="mono">2606 바이러스 · 2667 단지번호붙이기 · 11724 연결 요소의 개수 · 1012 유기농 배추 · 1697 숨바꼭질 · 2206 벽 부수고 이동하기</td></tr>`+
+        `<tr><td style="${S.th}">담기 / 트레이</td><td style="${S.td}">문제별 <b>담기 ↔ 담김</b> 토글 · 문제집 이름(기본 ‘그래프 심화’) · 담은 개수 · 프로그래머스·LeetCode는 익스텐션으로 둘러보며 담기</td></tr>`+
+        `<tr><td style="${S.th}">커리큘럼으로 보내기</td><td style="${S.td}">담은 문제로 <b>새 주차(4주차) 생성</b> → 커리큘럼에 추가 + <b>‘익스텐션 문제집’ 배지</b> · 제출 상태 전원 ‘안 풂’ 초기화</td></tr>`+
+      `</tbody></table>`
+    );
+
+    // ---------- 7. 필수 인터랙션 ----------
+    const interactions = box(
+      `<table style="${S.table}"><thead><tr><th style="${S.th};width:6%">#</th><th style="${S.th}">인터랙션</th><th style="${S.th};width:34%">결과 상태</th></tr></thead><tbody>`+
+        [['1','스터디 현황 / 커리큘럼 / 코드 비교 / 익스텐션 영역 전환','사이드바 네비로 뷰 전환'],
+         ['2','커리큘럼에서 문제 제출 흐름 시작','제출 모달 오픈 (언어·코드)'],
+         ['3','제출 실행 시 채점 진행 상태 변화','4/10 → 8/10 → 10/10 통과'],
+         ['4','채점 완료 후 결과 반영','모달 종료 + 상태 커밋'],
+         ['5','결과 반영 후 활동 피드에 새 활동 추가','정답 로그 상단 삽입'],
+         ['6','미제출자 자동 독촉 실행','독촉 로그 + 토스트'],
+         ['7','코드 비교에서 1753 3인 풀이 비교','지표·코드·요약 표시'],
+         ['8','익스텐션 자동 저장 데모 실행 (프로그래머스/LeetCode)','감지→저장 애니메이션 + 피드 반영'],
+         ['9','익스텐션 문제집 만들어 커리큘럼으로 보내기','새 4주차 생성 + 배지'],
+        ].map(r=>`<tr><td style="${S.tdMono};text-align:center">${r[0]}</td><td style="${S.td};font-weight:600">${r[1]}</td><td style="${S.td};color:#4b5750">${r[2]}</td></tr>`).join('')+
+      `</tbody></table>`+
+      `<div style="font-size:12.5px;font-weight:700;color:#16241d;margin:14px 0 4px">데모 조작 (Tweaks)</div>`+
+      `<div style="display:flex;gap:8px;flex-wrap:wrap">`+
+        ['시작 화면 (현황/커리큘럼/코드 비교)','멤버 목록 표시 on/off','채점 속도 (차분하게/빠르게)']
+        .map(t=>`<span style="font-size:10.5px;font-weight:600;color:#3f4d47;background:#eef2ee;border:1px solid #e2e8e4;border-radius:6px;padding:3px 9px">${t}</span>`).join('')+
+      `</div>`
+    );
+
+    // ---------- 7. 구현 제약 & 범위 ----------
+    const scope = box(
+      `<div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">`+
+        `<div style="${S.card}"><div style="font-size:11.5px;font-weight:800;color:#16241d;margin-bottom:8px">구현 제약</div>`+
+          this.ul([
+            '백엔드 없이 프론트엔드 더미 데이터로만 구현',
+            '외부 API 호출 없음 · 모든 데이터 코드 내부 선언',
+            '실제 저장 없음 (새로고침 시 초기화)',
+            '문제 지문·입력·출력·예제 미표시',
+          ])+
+        `</div>`+
+        `<div style="${S.card}"><div style="font-size:11.5px;font-weight:800;color:#16241d;margin-bottom:8px">향후 확장 (범위 밖)</div>`+
+          this.ul([
+            '알고리즘 시각화',
+            'AI 코드 리뷰',
+            '실 계정/인증 · 서버 저장 · 실시간 동기화',
+            '실제 채점 서버 연동',
+          ])+
+        `</div>`+
+      `</div>`+
+      `<div style="${S.card};margin-top:12px;background:#16241d;border-color:#16241d">`+
+        `<div style="font-size:11.5px;font-weight:800;color:#7ee2a8;margin-bottom:6px">핵심 메시지</div>`+
+        `<div style="font-size:13px;color:#e6f2eb;line-height:1.65">“알고리즘 스터디는 문제를 푸는 게 아니라 <b style="color:#fff">문제 선정·마감·제출·독촉·풀이 공개·코드 비교·진행률 관리가 계속 발생하는 운영 문제</b>다. 이걸 제품으로 만들면 GitHub PR·백준 그룹·문제집·카톡으로 흩어진 흐름을 <b style="color:#fff">한곳에 모을 수 있다</b>.”</div>`+
+      `</div>`
+    );
+
+    const sections=[
+      { no:'1', title:'개요 & 컨텍스트', tag:'Overview', bodyHtml:{__html:overview} },
+      { no:'2', title:'데이터 모델',      tag:'Members · Problems · States', bodyHtml:{__html:members} },
+      { no:'3', title:'스터디 현황',      tag:'Dashboard', bodyHtml:{__html:dashboard} },
+      { no:'4', title:'커리큘럼 & 제출 흐름', tag:'Curriculum · Submit', bodyHtml:{__html:curriculum} },
+      { no:'5', title:'코드 비교',        tag:'Code Compare', bodyHtml:{__html:compare} },
+      { no:'6', title:'익스텐션 — 자동 반영 & 문제집', tag:'Extension', bodyHtml:{__html:extension} },
+      { no:'7', title:'필수 인터랙션',    tag:'Interactions', bodyHtml:{__html:interactions} },
+      { no:'8', title:'구현 제약 & 범위', tag:'Scope', bodyHtml:{__html:scope} },
+    ];
+
+    return { sections };
+  }
+}
+</script>
+</body>
+</html>
