@@ -43,6 +43,15 @@ awesome-xxx-skills 같이 github 상에 유명한 skill들을 모아두는 공�
 
 > 이 스킬들은 알고리즘 문제를 **푸는** 도구가 아니라, 알고리즘 문제 풀이 제품의 도메인 프레이밍·요구사항·범위·리스크를 정의하는 **제품 도메인 전문가**입니다. 원본 `.skill.md`·번들·`README_subdomain_experts.md`는 카탈로그로 그대로 보존됩니다.
 
+## team-custom
+외부 소스를 벤더링/변환한 general·algo와 달리, **팀 회의록과 피봇 교훈에서 직접 뽑아낸 100도둑 전용 스킬**들을 모아두는 공간입니다. 원본이 우리 팀 자체라 출처 헤더가 없고, 팀 상황이 바뀌면 `references/`만 갱신합니다. 현재 **Skill 1**.
+
+| 스킬 | 디렉터리 | 하는 일 |
+|---|---|---|
+| team-idea-eval | [`.claude/skills/team-idea-eval`](./.claude/skills/team-idea-eval) | 새 아이디어를 회의록 기반 6축 기준표와 세 팀원(배준서·이중곤·이유제) 페르소나로 채점 |
+
+> **team-idea-eval** — 흩어진 팀원 의견을 응집한 페르소나와 회의에서 합의된 평가 기준표로 아이디어를 채점해, 피봇에서 얻은 교훈("세 명의 재미가 한 프로젝트에서 맞물려야 한다")을 매번 재현 가능한 판단으로 만든다. 산출물은 표 A(팀 공통 6축 + 비협상 게이트)·표 B(페르소나별 점수 + 편차 리스크)·표 C(순위·추천·액션). 트리거: "이 아이디어 평가해줘", "A vs B", "우리 팀에 맞아?". 기준·페르소나는 [`references/`](./.claude/skills/team-idea-eval/references)에 분리되어 있어 스킬 로직을 건드리지 않고 갱신한다.
+
 ## Skill vs Agent 분류 기준
 새 전문가를 추가할 때 **Skill**로 둘지 **Agent(서브에이전트)** 로 둘지는 아래 기준으로 판단한다.
 
@@ -68,7 +77,7 @@ awesome-xxx-skills 같이 github 상에 유명한 skill들을 모아두는 공�
 ## 활성화 (.claude/)
 Claude Code가 이 프로젝트에서 실제로 인식하려면 스킬은 `.claude/skills/<name>/`, 에이전트는 `.claude/agents/<name>.md`에 있어야 하므로 위 기준대로 모두 설치했다.
 
-- **`.claude/skills/` — 35개** (algo-experts 13 + general-experts 22)
+- **`.claude/skills/` — 36개** (algo-experts 13 + general-experts 22 + team-custom 1)
 - **`.claude/agents/` — 24개** (general-experts 25개 중 `accessibility-tester` 중복 1건 통합)
 
 정규화·보존 규칙:
